@@ -70,8 +70,10 @@ unProtectedRouter.get('/logout', async ctx => {
 })
 
 protectedRouter.get('/', async ctx => {
-  console.log(ctx.session.user)
-  await ctx.render('index', { user: ctx.session.user })
+  await ctx.render('index', {
+    user: ctx.session.user,
+    rawUser: JSON.stringify(ctx.session.user, null, 2)
+  })
 })
 
 protectedRouter.get('/saml', async ctx => {

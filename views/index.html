@@ -7,12 +7,41 @@
   </div>
 
   <h2>What is this?</h2>
+  <p>This is a small <strong>proof-of-concept</strong> application intended to demonstrate how an enterprise can provide
+  self-service SAML app registration to its developer teams</p>
 
   <h2>Why make this?</h2>
+  <p>You could spend your time manually registering SAML applications, but imagine if you didn't have to. Consider the following
+    alternatives that you could spend your time on:
+  </p>
+  <ul>
+    <li>Focus on resolving compliance issues or MRAs</li>
+    <li>Instead of just maintaining your service, you now have time to actually improve it to better enable developers/customers</li>
+    <li>Learn a new skill</li>
+    <li>Drink beer all day</li>
+  </ul>
 
   <h2>How does it work?</h2>
+  <p>It makes some API calls to the Azure graph API. Special thanks to this guide:
+    <a href="https://docs.microsoft.com/en-us/graph/application-saml-sso-configure-api">https://docs.microsoft.com/en-us/graph/application-saml-sso-configure-api</a>
+  </p>
+
+  <p>It really isn't special. The secret sauce is/will be in the specific security controls required at MUFG</p>
 
   <h2>Tech Stack</h2>
+  <ul>
+    <li>Alpine Linux Docker</li>
+    <li>Node.js 14.x</li>
+    <li><a href="https://koajs.com/">Koa web framework</a></li>
+    <li>Federated sign-on enabled with Azure AD and Open ID Connect</li>
+  </ul>
+
+  <h2>Who Are <strong>You?</strong></h2>
+  <code>
+    <pre>
+{{ rawUser }}
+    </pre>
+  </code>
 
 </main>
 
