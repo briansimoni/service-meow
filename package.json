@@ -1,0 +1,29 @@
+{
+  "name": "service-meow",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Brian Simoni",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/msal-node": "^1.0.1",
+    "@koa/router": "^10.0.0",
+    "@microsoft/microsoft-graph-client": "^2.2.1",
+    "dotenv": "^8.2.0",
+    "handlebars": "^4.7.7",
+    "isomorphic-fetch": "^3.0.0",
+    "koa": "^2.13.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-session": "^6.1.0",
+    "koa-views": "^7.0.0",
+    "node-forge": "^0.10.0",
+    "openid-client": "^4.5.0"
+  },
+  "devDependencies": {
+    "standard": "^16.0.3"
+  }
+}

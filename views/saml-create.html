@@ -1,0 +1,47 @@
+{{> header }} {{> sidebar }}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div
+    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+  >
+    <h1 class="h2">Create a SAML App</h1>
+  </div>
+
+  <form action="saml-create" method="POST">
+    <fieldset>
+      <div class="mb-3">
+        <label for="entityId" class="form-label">Entity ID - will also be used for saml assertion url (must be URL)</label>
+        <input
+          type="text"
+          id="entityId"
+          name="entityId"
+          class="form-control"
+          placeholder="https://something.com/example/saml"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="disabledSelect" class="form-label"
+          >Signing Algorithm</label
+        >
+        <select disabled id="disabledSelect" class="form-select">
+          <option>RSA SHA256</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="disabledFieldsetCheck"
+            disabled
+          />
+          <label class="form-check-label" for="disabledFieldsetCheck">
+            Encrypt Assertion
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </fieldset>
+  </form>
+</main>
+
+{{> footer }}
