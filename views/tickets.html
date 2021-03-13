@@ -1,0 +1,33 @@
+{{> header }} {{> sidebar }}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div
+    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+  >
+    <h1 class="h2">Tickets</h1>
+  </div>
+
+  <form id="ticket-form">
+    <div class="mb-3">
+      <label for="ticket-description" class="form-label">What can we help you with?</label>
+      <textarea class="form-control" id="ticket-description"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <div id="ticket-success" style="display:none" class="alert alert-success" role="alert">
+    Your ticket has been added to a queue and someone will get to it eventually
+  </div>
+
+</main>
+
+<script>
+    const form = document.getElementById('ticket-form')
+    form.addEventListener('submit', (event) => {
+        event.preventDefault()
+        document.getElementById('ticket-description').value = ''
+        const successAlert = document.getElementById('ticket-success')
+        successAlert.style.display = 'block'
+    })
+</script>
+
+{{> footer }}

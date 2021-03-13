@@ -63,7 +63,7 @@ unProtectedRouter.get('/callback', async ctx => {
 })
 
 unProtectedRouter.get('/login', async ctx => {
-  await ctx.render('login')
+  await ctx.render('login', { user: ctx.session.user })
 })
 
 unProtectedRouter.get('/logout', async ctx => {
@@ -72,21 +72,22 @@ unProtectedRouter.get('/logout', async ctx => {
 })
 
 protectedRouter.get('/', async ctx => {
-  console.log(ctx.session.accessToken)
-  const me = await getMe(ctx.session.accessToken)
-  console.log(me)
   await ctx.render('index', {
     user: ctx.session.user,
     rawUser: JSON.stringify(ctx.session.user, null, 2)
   })
 })
 
+protectedRouter.get('/tickets', async ctx => {
+  await ctx.render('tickets')
+})
+
 protectedRouter.get('/saml', async ctx => {
-  await ctx.render('saml-view')
+  await ctx.render('saml-view', { user: ctx.session.user })
 })
 
 protectedRouter.get('/saml-create', async ctx => {
-  await ctx.render('saml-create')
+  await ctx.render('saml-create', { user: ctx.session.user })
 })
 
 protectedRouter.post('/saml-create', async ctx => {
@@ -103,7 +104,7 @@ protectedRouter.post('/saml-create', async ctx => {
 })
 
 protectedRouter.get('/oauth', async ctx => {
-  await ctx.render('oauth')
+  await ctx.render('oauth', { user: ctx.session.user })
 })
 
 const render = views(path.join(__dirname, 'views'), {
