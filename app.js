@@ -6,6 +6,7 @@ const oidc = require('openid-client')
 const session = require('koa-session')
 const bodyParser = require('koa-bodyparser')
 const { SamlAppBuilder } = require('./saml')
+const { getMe } = require('./user-util')
 require('dotenv').config()
 
 const {
@@ -31,7 +32,7 @@ const unProtectedRouter = new Router()
 // makes the protected router "protected"
 protectedRouter.use(async (ctx, next) => {
   if (!ctx.session.user) {
-    ctx.redirect('/login')
+    return ctx.redirect('/login')
   }
   await next()
 })
@@ -57,6 +58,7 @@ unProtectedRouter.get('/callback', async ctx => {
   })
   const userInfo = await client.userinfo(tokenSet.access_token)
   ctx.session.user = userInfo
+  ctx.session.accessToken = tokenSet.access_token
   ctx.redirect('/')
 })
 
@@ -70,6 +72,9 @@ unProtectedRouter.get('/logout', async ctx => {
 })
 
 protectedRouter.get('/', async ctx => {
+  console.log(ctx.session.accessToken)
+  const me = await getMe(ctx.session.accessToken)
+  console.log(me)
   await ctx.render('index', {
     user: ctx.session.user,
     rawUser: JSON.stringify(ctx.session.user, null, 2)
@@ -85,11 +90,14 @@ protectedRouter.get('/saml-create', async ctx => {
 })
 
 protectedRouter.post('/saml-create', async ctx => {
+  console.log(ctx.session.accessToken)
+  const me = await getMe(ctx.session.accessToken)
   const { entityId } = ctx.request.body
   const appBuilder = new SamlAppBuilder()
   await appBuilder.buildSamlApp({
     displayName: entityId,
-    identifierUris: [entityId]
+    identifierUris: [entityId],
+    ownerId: me.id
   })
   ctx.body = `You successfully created ${entityId}`
 })
@@ -114,6 +122,23 @@ const render = views(path.join(__dirname, 'views'), {
 app.use(render)
 protectedRouter.use(render)
 
+// 404 middleware
+app.use(async (ctx, next) => {
+  try {
+    await next()
+    const status = ctx.status || 404
+    if (status === 404) {
+      ctx.throw(404)
+    }
+  } catch (err) {
+    ctx.status = err.status || 500
+    if (ctx.status === 404) {
+      await ctx.render('404')
+    } else {
+      throw err
+    }
+  }
+})
 app.use(unProtectedRouter.routes())
 app.use(unProtectedRouter.allowedMethods())
 

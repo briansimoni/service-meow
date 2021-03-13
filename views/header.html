@@ -10,18 +10,29 @@
       integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
       crossorigin="anonymous"
     />
+    <script src="https://kit.fontawesome.com/85a2e67c06.js" crossorigin="anonymous"></script>
+    <style>
+      #logo-cat {
+        color: white;
+        position: absolute;
+        left: 150px;
+      }
+    </style>
   </head>
   <body>
     <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">Service Meow</a>
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="/">ServiceMeow</a>
+        <i id="logo-cat" class="fas fa-cat"></i>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
+        {{#if user }}
         <ul class="navbar-nav px-3">
           <li class="nav-item text-nowrap">
             <a class="nav-link" href="/logout">Log Out</a>
           </li>
         </ul>
+        {{/if}}
       </header>
 
       <div class="container-fluid">

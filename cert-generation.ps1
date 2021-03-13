@@ -1,6 +1,8 @@
 # fqdn - this is used for the 'issued to' and 'issued by' field of the certificate
 # pwd - password for exporting the certificate private key
 # location - path to folder where both the pfx and cer file will be written to, for example C:\users\john\Documents
+#
+# Taken from https://blogs.aaddevsup.xyz/2020/08/using-powershell-to-configure-a-signing-certificate-for-a-saml-based-sso-enterprise-application/
  
 Param(
     [Parameter(Mandatory=$true)]

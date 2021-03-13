@@ -1,3 +1,9 @@
+/**
+ * saml.js is designed to either run on its own or as a dependency
+ * It contains all of the logic for interfacing with the Azure graph API
+ * and creating SAML applications
+ */
+
 const graph = require('@microsoft/microsoft-graph-client')
 const certificates = require('./certs.json')
 require('isomorphic-fetch')
@@ -147,11 +153,32 @@ class SamlAppBuilder {
       })
   }
 
+  async addAppOwner (appId, ownerId) {
+    await this.graphClient
+      .api(`/applications/${appId}/owners/$ref`)
+      .post({
+        '@odata.id':
+          `https://graph.microsoft.com/v1.0/users/${ownerId}`
+      })
+  }
+
+  async getApplicationsByUser (id) {
+    // const apps = await this.graphClient.api('/applications/124a0792-2275-4d49-bf51-8e572dab0055').get()
+    const apps = await this.graphClient
+      .api('/applications/124a0792-2275-4d49-bf51-8e572dab0055/owners/$ref')
+      .post({
+        '@odata.id':
+          'https://graph.microsoft.com/v1.0/users/750864be-6a89-4c95-884f-5029c06db6fb'
+      })
+    console.log(apps)
+  }
+
   /**
    * Combines all of the functions together to build a SAML application
    * @param {Object} opts
    * @param {String} opts.displayName
    * @param {String<Array>} opts.identifierUris also known as the entityid - will also be used for reply urls
+   * @param {String} opts.ownerId
    */
   async buildSamlApp (opts) {
     if (!Array.isArray(opts.identifierUris)) {
@@ -164,16 +191,18 @@ class SamlAppBuilder {
     await this.setSamlSSOSettings(servicePrincipal.id)
     await this.setSAMLUrls(application.id, opts.identifierUris)
     await this.setSigningCertificate(servicePrincipal.id)
+    await this.addAppOwner(application.id, opts.ownerId)
   }
 }
 
 async function main () {
   const appBuilder = new SamlAppBuilder()
   try {
-    await appBuilder.buildSamlApp({
-      displayName: 'http://localhost/test/2/saml',
-      identifierUris: ['http://localhost/test/2/saml']
-    })
+    await appBuilder.getApplicationsByUser()
+    // await appBuilder.buildSamlApp({
+    //   displayName: 'http://localhost/test/2/saml',
+    //   identifierUris: ['http://localhost/test/2/saml']
+    // })
     // console.log('app created successfully')
   } catch (err) {
     console.log(err)
