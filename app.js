@@ -79,11 +79,15 @@ protectedRouter.get('/', async ctx => {
 })
 
 protectedRouter.get('/tickets', async ctx => {
-  await ctx.render('tickets')
+  await ctx.render('tickets', { user: ctx.session.user })
 })
 
 protectedRouter.get('/saml', async ctx => {
-  await ctx.render('saml-view', { user: ctx.session.user })
+  const samlBuilder = new SamlAppBuilder()
+  const me = await getMe(ctx.session.accessToken)
+  const apps = await samlBuilder.getApplicationsByUser(me.id)
+  console.log(apps)
+  await ctx.render('saml-view', { user: ctx.session.user, apps })
 })
 
 protectedRouter.get('/saml-create', async ctx => {
@@ -91,7 +95,6 @@ protectedRouter.get('/saml-create', async ctx => {
 })
 
 protectedRouter.post('/saml-create', async ctx => {
-  console.log(ctx.session.accessToken)
   const me = await getMe(ctx.session.accessToken)
   const { entityId } = ctx.request.body
   const appBuilder = new SamlAppBuilder()

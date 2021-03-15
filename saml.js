@@ -5,11 +5,12 @@
  */
 
 const graph = require('@microsoft/microsoft-graph-client')
+const CosmosClient = require('@azure/cosmos').CosmosClient
 const certificates = require('./certs.json')
 require('isomorphic-fetch')
 require('dotenv').config()
 
-const { CLIENT_ID, CLIENT_SECRET, TENNANT_ID } = process.env
+const { CLIENT_ID, CLIENT_SECRET, TENNANT_ID, COSMOS_DB_KEY } = process.env
 
 class ServiceMeowAuthProvider {
   constructor () {
@@ -52,6 +53,13 @@ class SamlAppBuilder {
       authProvider: new ServiceMeowAuthProvider()
     }
     this.graphClient = graph.Client.initWithMiddleware(clientOptions)
+    const client = new CosmosClient({
+      endpoint: 'https://service-meow-db.documents.azure.com:443/',
+      key: COSMOS_DB_KEY
+    })
+    const db = client.database('apps')
+    const container = db.container('saml')
+    this.container = container
 
     this.createApplication = this.createApplication.bind(this)
     this.setSamlSSOSettings = this.setSamlSSOSettings.bind(this)
@@ -77,17 +85,17 @@ class SamlAppBuilder {
       })
     // per the guide that I used, it may take time to provision the app
     // It recommended that you poll the graph API until you see the app
-    // was fully created. This will poll every one 500ms
+    // was fully created. This will poll every one 1 second
     // https://docs.microsoft.com/en-us/graph/application-saml-sso-configure-api
     let app
     let attempts = 0
     process.stdout.write('Polling for application')
-    while (!app && attempts < 30) {
+    while (!app && attempts < 15) {
       process.stdout.write('.')
       await new Promise(resolve => {
         setTimeout(() => {
           resolve()
-        }, 500)
+        }, 1000)
       })
       try {
         app = await this.graphClient
@@ -162,15 +170,12 @@ class SamlAppBuilder {
       })
   }
 
-  async getApplicationsByUser (id) {
-    // const apps = await this.graphClient.api('/applications/124a0792-2275-4d49-bf51-8e572dab0055').get()
-    const apps = await this.graphClient
-      .api('/applications/124a0792-2275-4d49-bf51-8e572dab0055/owners/$ref')
-      .post({
-        '@odata.id':
-          'https://graph.microsoft.com/v1.0/users/750864be-6a89-4c95-884f-5029c06db6fb'
-      })
-    console.log(apps)
+  async getApplicationsByUser (ownerId) {
+    // TODO: figure out how not to get SQL injected with cosmos db
+    const items = await this.container.items.query({ query: `SELECT * FROM c WHERE c.ownerId = '${ownerId}'` }).fetchAll()
+    const appPromises = items.resources.map((app) => this.graphClient.api(`/applications/${app.id}`).get())
+    const apps = await Promise.all(appPromises)
+    return apps
   }
 
   /**
@@ -192,13 +197,30 @@ class SamlAppBuilder {
     await this.setSAMLUrls(application.id, opts.identifierUris)
     await this.setSigningCertificate(servicePrincipal.id)
     await this.addAppOwner(application.id, opts.ownerId)
+    await this.container.items.create({
+      id: application.id,
+      servicePrincipalId: servicePrincipal.id,
+      displayName: opts.displayName,
+      ownerId: opts.ownerId
+    })
+    console.log('successfully created app and added to db')
   }
 }
 
+// this main functions is just for testing purposes
 async function main () {
   const appBuilder = new SamlAppBuilder()
   try {
-    await appBuilder.getApplicationsByUser()
+    const client = new CosmosClient({
+      endpoint: 'https://service-meow-db.documents.azure.com:443/',
+      key: COSMOS_DB_KEY
+    })
+
+    const db = client.database('apps')
+    const container = db.container('saml')
+    const items = await container.items.query({ query: 'SELECT * FROM c' }).fetchAll()
+    console.log(items)
+    // await appBuilder.getApplicationsByUser()
     // await appBuilder.buildSamlApp({
     //   displayName: 'http://localhost/test/2/saml',
     //   identifierUris: ['http://localhost/test/2/saml']

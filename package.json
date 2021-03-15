@@ -10,6 +10,7 @@
   "author": "Brian Simoni",
   "license": "MIT",
   "dependencies": {
+    "@azure/cosmos": "^3.10.3",
     "@azure/msal-node": "^1.0.1",
     "@koa/router": "^10.0.0",
     "@microsoft/microsoft-graph-client": "^2.2.1",
