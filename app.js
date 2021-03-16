@@ -53,7 +53,7 @@ unProtectedRouter.get('/auth', async ctx => {
 unProtectedRouter.get('/callback', async ctx => {
   const params = client.callbackParams(ctx.request)
   const codeVerifier = ctx.session.codeVerifier
-  const tokenSet = await client.callback('http://localhost/callback', params, {
+  const tokenSet = await client.callback(REDIRECT_URI, params, {
     code_verifier: codeVerifier
   })
   const userInfo = await client.userinfo(tokenSet.access_token)
