@@ -121,6 +121,7 @@ protectedRouter.get('/saml/:id', async ctx => {
 })
 
 protectedRouter.get('/oauth', async ctx => {
+  throw TypeError('poop')
   await ctx.render('oauth', { user: ctx.session.user })
 })
 
@@ -151,9 +152,9 @@ app.use(async (ctx, next) => {
   } catch (err) {
     ctx.status = err.status || 500
     if (ctx.status === 404) {
-      await ctx.render('404')
+      await ctx.render('404', { user: ctx.session.user })
     } else {
-      throw err
+      await ctx.render('error', { status: ctx.status, error: err })
     }
   }
 })
@@ -162,6 +163,10 @@ app.use(unProtectedRouter.allowedMethods())
 
 app.use(protectedRouter.routes())
 app.use(protectedRouter.allowedMethods())
+
+app.on('error', async (error, ctx) => {
+  console.log(error)
+})
 
 async function main () {
   console.log('server is starting up')
