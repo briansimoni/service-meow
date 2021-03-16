@@ -121,7 +121,6 @@ protectedRouter.get('/saml/:id', async ctx => {
 })
 
 protectedRouter.get('/oauth', async ctx => {
-  throw TypeError('poop')
   await ctx.render('oauth', { user: ctx.session.user })
 })
 
