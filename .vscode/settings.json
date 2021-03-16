@@ -1,3 +1,9 @@
 {
-    "editor.defaultFormatter": "numso.prettier-standard-vscode"
+    "editor.defaultFormatter": "numso.prettier-standard-vscode",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/a3a5774a-af08-409f-a604-b43a574e7841/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/service-meow",
+    "appService.deploySubpath": "."
 }

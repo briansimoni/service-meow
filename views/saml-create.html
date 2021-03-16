@@ -6,6 +6,12 @@
     <h1 class="h2">Create a SAML App</h1>
   </div>
 
+  {{#if createdApp }}
+  <div class="alert alert-success" role="alert">
+    Successfully created {{ createdApp }}
+  </div>
+  {{/if}}
+
   <form action="saml-create" method="POST">
     <fieldset>
       <div class="mb-3">

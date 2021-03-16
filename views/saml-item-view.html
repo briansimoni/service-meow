@@ -1,0 +1,21 @@
+{{> header }} {{> sidebar }}
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+  <div
+    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+  >
+    <h1 class="h2">SAML App Settings</h1>
+  </div>
+
+  <p>
+      Here, you would be able to see the settings for your app. Some fields may be read only, some users could potentially edit.
+      For the sake of a POC, I'm just rendering the JSON that is returned from the Azure graph API.
+  </p>
+
+<code>
+    <pre>
+{{app}}
+    </pre>
+</code>
+</main>
+
+{{> footer }}

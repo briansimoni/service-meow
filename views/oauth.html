@@ -6,7 +6,21 @@
     <h1 class="h2">OAuth/OIDC</h1>
   </div>
 
-  <h2>Not available yet</h2>
+  <div class="alert alert-warning" role="alert">
+    Not available in this POC
+  </div>
+
+  <p>
+    Enabling self-service for OpenID Connect or OAuth applications would probably be even easier. In my experience,
+    there are far less variances in an OIDC configuration than SAML configurations. For instance, the set of claims
+    that OIDC relying parties expect tend to be inline with the standard while many SAML apps look for small differences.
+  </p>
+
+  <p>
+    OpenID Connect and OAuth also provide solutions where SAML may not. Single page apps, devices without keyboards etc...
+    The protocol tends to be developer friendly as well. I was able to turn it on for this portal using a few lines of code
+    having never used Azure AD before. By extension, self-service OIDC might better serve developers and future technology decisions.
+  </p>
 
 </main>
 

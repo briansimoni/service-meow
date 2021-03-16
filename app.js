@@ -58,6 +58,7 @@ unProtectedRouter.get('/callback', async ctx => {
   })
   const userInfo = await client.userinfo(tokenSet.access_token)
   ctx.session.user = userInfo
+  // ctx.session.tokenSet = tokenSet
   ctx.session.accessToken = tokenSet.access_token
   ctx.redirect('/')
 })
@@ -87,7 +88,7 @@ protectedRouter.get('/saml', async ctx => {
   const me = await getMe(ctx.session.accessToken)
   const apps = await samlBuilder.getApplicationsByUser(me.id)
   console.log(apps)
-  await ctx.render('saml-view', { user: ctx.session.user, apps })
+  await ctx.render('saml-list', { user: ctx.session.user, apps })
 })
 
 protectedRouter.get('/saml-create', async ctx => {
@@ -103,7 +104,20 @@ protectedRouter.post('/saml-create', async ctx => {
     identifierUris: [entityId],
     ownerId: me.id
   })
-  ctx.body = `You successfully created ${entityId}`
+  await ctx.render('saml-create', {
+    user: ctx.session.user,
+    createdApp: entityId
+  })
+})
+
+protectedRouter.get('/saml/:id', async ctx => {
+  const id = ctx.params.id
+  const saml = new SamlAppBuilder()
+  const app = await saml.getApplicationById(id)
+  await ctx.render('saml-item-view', {
+    user: ctx.session.user,
+    app: JSON.stringify(app, null, 2)
+  })
 })
 
 protectedRouter.get('/oauth', async ctx => {
@@ -161,8 +175,9 @@ async function main () {
     response_types: ['code']
   })
 
-  const server = app.listen('80', '0.0.0.0', async () => {
-    console.log('listening on 80')
+  const port = process.env.PORT || 80
+  const server = app.listen(port, '0.0.0.0', async () => {
+    console.log('listening on', port)
   })
 
   process.on('SIGINT', () => {

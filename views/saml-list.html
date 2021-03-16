@@ -8,8 +8,6 @@
 
   <h2>These are the SAML apps that you own</h2>
 
-  <a href="/saml-create">create a new app</a>
-
   <table class="table table-striped">
     <thead>
       <tr>
@@ -20,12 +18,13 @@
     <tbody>
       {{#each apps}}
       <tr>
-        <td>{{id}}</td>
+        <td><a href="/saml/{{id}}">{{id}}</a></td>
         <td>{{displayName}}</td>
       </tr>
       {{/each}}
     </tbody>
   </table>
+  <a href="/saml-create"><button class="btn btn-primary">Create a new app</button></a>
 
 </main>
 

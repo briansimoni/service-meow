@@ -178,6 +178,10 @@ class SamlAppBuilder {
     return apps
   }
 
+  async getApplicationById (id) {
+    return this.graphClient.api(`/applications/${id}`).get()
+  }
+
   /**
    * Combines all of the functions together to build a SAML application
    * @param {Object} opts
