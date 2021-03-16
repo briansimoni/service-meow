@@ -7,6 +7,7 @@ const session = require('koa-session')
 const bodyParser = require('koa-bodyparser')
 const { SamlAppBuilder } = require('./saml')
 const { getMe } = require('./user-util')
+const formatXml = require('xml-formatter')
 require('dotenv').config()
 
 const {
@@ -87,7 +88,6 @@ protectedRouter.get('/saml', async ctx => {
   const samlBuilder = new SamlAppBuilder()
   const me = await getMe(ctx.session.accessToken)
   const apps = await samlBuilder.getApplicationsByUser(me.id)
-  console.log(apps)
   await ctx.render('saml-list', { user: ctx.session.user, apps })
 })
 
@@ -114,10 +114,28 @@ protectedRouter.get('/saml/:id', async ctx => {
   const id = ctx.params.id
   const saml = new SamlAppBuilder()
   const app = await saml.getApplicationById(id)
+  let userAccessUrl
+  try {
+    userAccessUrl = `https://myapps.microsoft.com/signin/${app.identifierUris[0].replace(/[:./]/g, '')}/${app.appId}/?tenantId=${TENNANT_ID}`
+  } catch (error) {
+    console.warn('unable to create user accessUrl', error.message)
+  }
+
+  const metadataUrl = `https://login.microsoftonline.com/${TENNANT_ID}/federationmetadata/2007-06/federationmetadata.xml?appid=${app.appId}`
   await ctx.render('saml-item-view', {
     user: ctx.session.user,
-    app: JSON.stringify(app, null, 2)
+    app,
+    stringifiedApp: JSON.stringify(app, null, 2),
+    userAccessUrl,
+    metadataUrl
   })
+})
+
+unProtectedRouter.post('/sso/(.*)', async ctx => {
+  const { SAMLResponse } = ctx.request.body
+  const xmlResponse = Buffer.from(SAMLResponse, 'base64').toString('utf-8')
+  const formattedXml = formatXml(xmlResponse)
+  await ctx.render('sso', { assertion: formattedXml })
 })
 
 protectedRouter.get('/oauth', async ctx => {

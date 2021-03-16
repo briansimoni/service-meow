@@ -8,12 +8,15 @@
 
   <p>
       Here, you would be able to see the settings for your app. Some fields may be read only, some users could potentially edit.
-      For the sake of a POC, I'm just rendering the JSON that is returned from the Azure graph API.
   </p>
+
+  <p>View metadata <a href={{metadataUrl}}>here</a></p>
+
+  <a href="{{userAccessUrl}}"><button class="btn btn-primary">Test SAML SSO</button></a>
 
 <code>
     <pre>
-{{app}}
+{{stringifiedApp}}
     </pre>
 </code>
 </main>

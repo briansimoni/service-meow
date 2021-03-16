@@ -19,7 +19,8 @@
     "koa-session": "^6.1.0",
     "koa-views": "^7.0.0",
     "node-forge": "^0.10.0",
-    "openid-client": "^4.5.0"
+    "openid-client": "^4.5.0",
+    "xml-formatter": "^2.4.0"
   },
   "devDependencies": {
     "standard": "^16.0.3"

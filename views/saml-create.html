@@ -12,6 +12,10 @@
   </div>
   {{/if}}
 
+  <div class="alert alert-info" role="alert">
+    Pro tip! If you use the placeholder url format, you can use this website to view the SAML assertion.
+  </div>
+
   <form action="saml-create" method="POST">
     <fieldset>
       <div class="mb-3">
@@ -21,8 +25,20 @@
           id="entityId"
           name="entityId"
           class="form-control"
-          placeholder="https://something.com/example/saml"
+          value="https://service-meow.azurewebsites.net/sso/{your-custom-thing-here}"
         />
+      </div>
+      <p>
+        There are many small configuration changes that service providers may need. For exmaple, there are plenty that ask
+        for different sets of claims (attributes) and other that ask for different signing algorithms.
+      </p>
+      <div class="mb-3">
+        <select disabled class="form-select form-select-sm" aria-label=".form-select-sm example">
+          <option selected>Select claims to appear in the SAML assertion</option>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
       </div>
       <div class="mb-3">
         <label for="disabledSelect" class="form-label"
