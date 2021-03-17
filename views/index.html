@@ -22,22 +22,61 @@
   </ul>
 
   <h2>How does it work?</h2>
-  <p>It makes some API calls to the Azure graph API. Special thanks to this guide:
+  <p>It makes a series of API calls to the Azure graph API. Special thanks to this guide:
     <a href="https://docs.microsoft.com/en-us/graph/application-saml-sso-configure-api">https://docs.microsoft.com/en-us/graph/application-saml-sso-configure-api</a>
   </p>
 
-  <p>It really isn't special. The secret sauce is/will be in the specific security controls required at MUFG</p>
+  <p>
+    To figure out who owns and can edit application settings, I create a database entry. While I would prefer to keep the app completely stateless
+    I wasn't able to find exactly what I needed directly from the graph API.
+  </p>
+
+  <p>
+    Here is a code snippet. I abstracted some of the graph API calls into higher level functions. This code runs when you make a form
+    submission to create a new SAML application.
+  </p>
+  <pre>
+    <code class="javascript">
+      // creates an Azure Ad enterprise app
+      const enterpriseApp = await this.createApplication({
+        displayName: opts.displayName
+      })
+      const { application, servicePrincipal } = enterpriseApp
+  
+      // sets the single-sign-on mode to SAML
+      await this.setSamlSSOSettings(servicePrincipal.id)
+  
+      // sets the ACS or reply urls (where the SAML assertion is sent)
+      await this.setSAMLUrls(application.id, opts.identifierUris)
+  
+      // Adds a signing certificate. It can be a cert provided by an enterprise PKI system
+      await this.setSigningCertificate(servicePrincipal.id)
+  
+      // Adds an application owner. This adds an owner to the app in Azure AD
+      await this.addAppOwner(application.id, opts.ownerId)
+  
+      // For this proof-of-concept, I also save the owner information in
+      // my own database to expand access control features and for faster lookups
+      await this.container.items.create({
+        id: application.id,
+        servicePrincipalId: servicePrincipal.id,
+        displayName: opts.displayName,
+        ownerId: opts.ownerId
+      })
+      console.log('successfully created app and added to db')
+    </code>
+  </pre>
 
   <p>See <a href="https://github.com/briansimoni/service-meow">GitHub</a></p>
 
   <h2>Tech Stack</h2>
   <ul>
-    <li>Node.js 14.x</li>
+    <li><a href="https://nodejs.org/">Node.js 14.x</a></li>
     <li><a href="https://koajs.com/">Koa web framework</a></li>
-    <li>Bootstrap5 beta and Handlebars for UI</li>
+    <li><a href="https://getbootstrap.com/docs/5.0/getting-started/introduction/">Bootstrap5 beta</a> and <a href="https://handlebarsjs.com/">Handlebars</a> for UI</li>
     <li>Federated sign-on enabled with Azure AD and Open ID Connect</li>
-    <li>Azure App Services (for hosting)</li>
-    <li>Cosmos DB</li>
+    <li><a href="https://azure.microsoft.com/en-us/services/app-service/">Azure App Services</a> (for hosting)</li>
+    <li><a href="https://azure.microsoft.com/en-us/services/cosmos-db/">Cosmos DB</a></li>
   </ul>
 
   <h2>Other Notes/Findings</h2>
@@ -48,11 +87,11 @@
   </p>
 
   <h2>Who Are <strong>You?</strong></h2>
-  <code>
-    <pre>
+  <pre>
+  <code class="javascript">
 {{ rawUser }}
-    </pre>
   </code>
+  </pre>
 
 </main>
 

@@ -18,3 +18,6 @@ COSMOS_DB_KEY
 ```
 
 You need to create an app registration in Azure AD and give it permissions to read/write applications on its own. Once created, you can get the client id, secret, and redirect uri.This application uses Azure Cosmos DB, so you'll need to provision a database and provide the key too. The session secret is used for signing and encrypting cookies so make it whatever you want. Longer is better. Tennant ID is your azure tennant ID.
+
+## Warning
+Do not drop this code into production. The certificates used in this POC are in cleartext in the `certs.json` file. The secret key is also included. This is just one of several major security issues.

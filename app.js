@@ -1,11 +1,13 @@
 const Koa = require('koa')
 const Router = require('@koa/router')
+const serve = require('koa-static')
+const mount = require('koa-mount')
 const views = require('koa-views')
 const path = require('path')
 const oidc = require('openid-client')
 const session = require('koa-session')
 const bodyParser = require('koa-bodyparser')
-const { SamlAppBuilder } = require('./saml')
+const { SamlAppUtil } = require('./saml')
 const { getMe } = require('./user-util')
 const formatXml = require('xml-formatter')
 require('dotenv').config()
@@ -21,10 +23,18 @@ const {
 /** @type oidc.Client */
 let client
 
+const sessionConfig = {
+  key: 'service-meow-session',
+  maxAge: 3600000
+}
+
 const app = new Koa()
 app.keys = [SESSION_SECRET]
-app.use(session(app))
+app.use(session(sessionConfig, app))
 app.use(bodyParser())
+
+const staticFiles = serve(path.join(__dirname, 'static'))
+app.use(mount('/static', staticFiles))
 
 const protectedRouter = new Router()
 const unProtectedRouter = new Router()
@@ -85,7 +95,7 @@ protectedRouter.get('/tickets', async ctx => {
 })
 
 protectedRouter.get('/saml', async ctx => {
-  const samlBuilder = new SamlAppBuilder()
+  const samlBuilder = new SamlAppUtil()
   const me = await getMe(ctx.session.accessToken)
   const apps = await samlBuilder.getApplicationsByUser(me.id)
   await ctx.render('saml-list', { user: ctx.session.user, apps })
@@ -98,7 +108,7 @@ protectedRouter.get('/saml-create', async ctx => {
 protectedRouter.post('/saml-create', async ctx => {
   const me = await getMe(ctx.session.accessToken)
   const { entityId } = ctx.request.body
-  const appBuilder = new SamlAppBuilder()
+  const appBuilder = new SamlAppUtil()
   await appBuilder.buildSamlApp({
     displayName: entityId,
     identifierUris: [entityId],
@@ -112,7 +122,7 @@ protectedRouter.post('/saml-create', async ctx => {
 
 protectedRouter.get('/saml/:id', async ctx => {
   const id = ctx.params.id
-  const saml = new SamlAppBuilder()
+  const saml = new SamlAppUtil()
   const app = await saml.getApplicationById(id)
   let userAccessUrl
   try {

@@ -47,7 +47,7 @@ class ServiceMeowAuthProvider {
   }
 }
 
-class SamlAppBuilder {
+class SamlAppUtil {
   constructor () {
     const clientOptions = {
       authProvider: new ServiceMeowAuthProvider()
@@ -193,14 +193,27 @@ class SamlAppBuilder {
     if (!Array.isArray(opts.identifierUris)) {
       throw new TypeError('Expected opts.identifierUris to be Array')
     }
+
+    // creates an Azure Ad enterprise app
     const enterpriseApp = await this.createApplication({
       displayName: opts.displayName
     })
     const { application, servicePrincipal } = enterpriseApp
+
+    // sets the single-sign-on mode to SAML
     await this.setSamlSSOSettings(servicePrincipal.id)
+
+    // sets the ACS or reply urls (where the SAML assertion is sent)
     await this.setSAMLUrls(application.id, opts.identifierUris)
+
+    // Adds a signing certificate. It can be a cert provided by an enterprise PKI system
     await this.setSigningCertificate(servicePrincipal.id)
+
+    // Adds an application owner. This adds an owner to the app in Azure AD
     await this.addAppOwner(application.id, opts.ownerId)
+
+    // For this proof-of-concept, I also save the owner information in
+    // my own database to expand access control features and for faster lookups
     await this.container.items.create({
       id: application.id,
       servicePrincipalId: servicePrincipal.id,
@@ -213,7 +226,7 @@ class SamlAppBuilder {
 
 // this main functions is just for testing purposes
 async function main () {
-  const appBuilder = new SamlAppBuilder()
+  const appBuilder = new SamlAppUtil()
   try {
     const client = new CosmosClient({
       endpoint: 'https://service-meow-db.documents.azure.com:443/',
@@ -240,5 +253,5 @@ if (require.main === module) {
 }
 
 module.exports = {
-  SamlAppBuilder
+  SamlAppUtil
 }
