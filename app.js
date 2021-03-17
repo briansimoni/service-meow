@@ -36,6 +36,22 @@ app.use(bodyParser())
 const staticFiles = serve(path.join(__dirname, 'static'))
 app.use(mount('/static', staticFiles))
 
+// request logging middleware
+app.use((ctx, next) => {
+  const start = new Date().getTime()
+  ctx.res.on('finish', () => {
+    console.log(JSON.stringify({
+      responseTime: new Date().getTime() - start,
+      statusCode: ctx.res.statusCode,
+      method: ctx.request.method,
+      path: ctx._matchedRoute || ctx.path,
+      remoteAddress: ctx.ip,
+      userAgent: ctx.request.headers['user-agent']
+    }, null, 2))
+  })
+  return next()
+})
+
 const protectedRouter = new Router()
 const unProtectedRouter = new Router()
 
