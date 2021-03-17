@@ -1,17 +1,37 @@
 {{> header }}
-<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<main class="col">
   <div
     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
   >
-  {{#if justLoggedOut }}
+    {{#if justLoggedOut }}
     <h1>You logged out successfully</h1>
-  {{/if}}
-    <h1 class="h2">Log In With Microsoft</h1>
+    {{/if}}
   </div>
 
-  <a href="/auth">Log In</a>
+  <div class="container">
+    <div class="row text-center">
+      <a href="/auth"
+        ><button style="margin-top:10vh" type="button" class="btn btn-primary">
+          <i class="fas sign-in-alt"></i>Log In With Microsoft
+        </button></a
+      >
+    </div>
 
+    <!-- <div class="row text-center">
+      <img style="width:100px; height:auto" class="img-fluid" src="/static/microsoft-logo.webp">
+    </div> -->
 
+    <div class="row" style="margin-top:40vh">
+      <div class="alert alert-warning" role="alert">
+        <p>
+          For certain enterprise users, know that your internal proxy might be
+          adding a "Restrict-Access-To-Tenants" header to your authentication
+          requests which would block you from logging into my app
+          <em>while on vpn</em>
+        </p>
+      </div>
+    </div>
+  </div>
 </main>
 
 {{> footer }}

@@ -11,15 +11,17 @@
   self-service SAML app registration to its developer teams</p>
 
   <h2>Why make this?</h2>
-  <p>You could spend your time manually registering SAML applications, but imagine if you didn't have to. Consider the following
-    alternatives that you could spend your time on:
+  <p>
+    This is another great way to provide automation, security controls, and to empower developers. Instead of waiting potentially weeks
+    for a manual approval to take place, application teams can submit a request and have it fulfilled instantly. All of restrictions
+    that we want to have in place on Azure AD enterprise applications can be built into the code along with all of the record keeping
+    that an enterprise might require.
   </p>
-  <ul>
-    <li>Focus on resolving compliance issues or MRAs</li>
-    <li>Instead of just maintaining your service, you now have time to actually improve it to better enable developers/customers</li>
-    <li>Learn a new skill</li>
-    <li>Drink beer all day</li>
-  </ul>
+
+  <p>
+    While users are submitting requests for a new SAML app registration, we can also provide guidance and references to
+    best security practices when they start their implementation.
+  </p>
 
   <h2>How does it work?</h2>
   <p>It makes a series of API calls to the Azure graph API. Special thanks to this guide:
@@ -67,7 +69,7 @@
     </code>
   </pre>
 
-  <p>See <a href="https://github.com/briansimoni/service-meow">GitHub</a></p>
+  <p>See <a href="https://github.com/briansimoni/service-meow/blob/654c3a36deea6ce4238e218200da890b208b4ee0/saml.js#L192">GitHub</a></p>
 
   <h2>Tech Stack</h2>
   <ul>
@@ -80,6 +82,10 @@
   </ul>
 
   <h2>Other Notes/Findings</h2>
+  <p>
+    During this experiment, I was unable to find any true limitations preventing an enterprise from truly providing self-service app registration
+    into Azure AD. While at times I think the graph API could be more intuitive, it offers everything that you need to build a self-service portal.
+  </p>
   <p>The "ownership" of applications may continue to be an interesting problem. There is a concept of application ownership
     built into Azure, but querying for apps based on who the owner is might not be possible. Owners can be individual microsoft accounts
     but, group ownership is not supported. Additonally, granting an employee ownership of an application might provide
