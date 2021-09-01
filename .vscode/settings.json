@@ -5,5 +5,17 @@
         ".vscode{,/**}"
     ],
     "appService.defaultWebAppToDeploy": "/subscriptions/a3a5774a-af08-409f-a604-b43a574e7841/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/service-meow",
-    "appService.deploySubpath": "."
+    "appService.deploySubpath": ".",
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[xml]": {
+        "editor.defaultFormatter": "redhat.vscode-xml"
+    },
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }

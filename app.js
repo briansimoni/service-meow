@@ -123,12 +123,13 @@ protectedRouter.get('/saml-create', async ctx => {
 
 protectedRouter.post('/saml-create', async ctx => {
   const me = await getMe(ctx.session.accessToken)
-  const { entityId } = ctx.request.body
+  const { entityId, signOnUrl } = ctx.request.body
   const appBuilder = new SamlAppUtil()
   await appBuilder.buildSamlApp({
     displayName: entityId,
     identifierUris: [entityId],
-    ownerId: me.id
+    ownerId: me.id,
+    signOnUrl
   })
   await ctx.render('saml-create', {
     user: ctx.session.user,
@@ -140,6 +141,7 @@ protectedRouter.get('/saml/:id', async ctx => {
   const id = ctx.params.id
   const saml = new SamlAppUtil()
   const app = await saml.getApplicationById(id)
+  console.log(app)
   let userAccessUrl
   try {
     userAccessUrl = `https://myapps.microsoft.com/signin/${app.identifierUris[0].replace(/[:./]/g, '')}/${app.appId}/?tenantId=${TENNANT_ID}`
@@ -230,18 +232,34 @@ async function main () {
 
   process.on('SIGINT', () => {
     console.info('SIGINT signal received. Server shutting down')
-    server.close(() => {
-      console.log('server shut down gracefully')
-      process.exit(0)
-    })
+    setTimeout(() => {
+      server.close((err) => {
+        if (err) {
+          console.error(err.message)
+          process.exit(1)
+        }
+        console.log('server shut down gracefully')
+        process.exit(0)
+      })
+      console.error('timeout reached. exit code 1')
+      process.exit(1)
+    }, 1000)
   })
 
   process.on('SIGTERM', () => {
     console.info('SIGTERM signal received. Server shutting down')
-    server.close(() => {
-      console.log('server shut down gracefully')
-      process.exit(0)
-    })
+    setTimeout(() => {
+      server.close((err) => {
+        if (err) {
+          console.error(err.message)
+          process.exit(1)
+        }
+        console.log('server shut down gracefully')
+        process.exit(0)
+      })
+      console.error('timeout reached. exit code 1')
+      process.exit(1)
+    }, 1000)
   })
 }
 main()

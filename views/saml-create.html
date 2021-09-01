@@ -18,6 +18,7 @@
 
   <form action="saml-create" method="POST">
     <fieldset>
+
       <div class="mb-3">
         <label for="entityId" class="form-label">Entity ID - will also be used for saml assertion url (must be URL)</label>
         <input
@@ -28,6 +29,18 @@
           value="https://service-meow.azurewebsites.net/sso/{your-custom-thing-here}"
         />
       </div>
+
+      <div class="mb-3">
+        <label for="Sign on URL" class="form-label">
+          This URL contains the sign-in page for this application that will perform the service provider-initiated single sign-on. Leave it blank if you want to perform identity provider initiated single sign-on.</label>
+        <input
+          type="text"
+          id="signOnUrl"
+          name="signOnUrl"
+          class="form-control"
+        />
+      </div>
+      
       <p>
         There are many small configuration changes that service providers may need. For exmaple, there are plenty that ask
         for different sets of claims (attributes) and other that ask for different signing algorithms.
